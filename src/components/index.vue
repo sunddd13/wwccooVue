@@ -8,16 +8,12 @@
     <!-- 提示信息 -->
     <div class="container p-lg-4">
       <h2 class="element">chatGpt3.5</h2>
-      <a class="target a-0" style="text-decoration:underline;" href="https://jq.qq.com/?_wv=1027&k=z1ckR9td"
-        target="_blank" title="加入qq群">
-        <Icon icon="noto-v1:penguin" /> QQ群:658918089(已满)。
-      </a>
+      <a class="target a-0" style="text-decoration:underline;" href="https://jq.qq.com/?_wv=1027&k=z1ckR9td" target="_blank" title="加入qq群"><Icon icon="noto-v1:penguin" /> QQ群①:(满)。</a>
+      <a class="target a-0" style="text-decoration:underline;" href="https://jq.qq.com/?_wv=1027&k=OWK9u5XB" target="_blank" title="加入qq群"><Icon icon="noto-v1:penguin" /> QQ群②:(满)。</a>
       <br><br>
-      <a class="target a-0" style="text-decoration:underline;" href="https://jq.qq.com/?_wv=1027&k=OWK9u5XB"
-        target="_blank" title="加入qq群">
-        <Icon icon="noto-v1:penguin" /> 新QQ群:498622037。
-      </a>
+      <a class="target a-0" style="text-decoration:underline;" href="https://jq.qq.com/?_wv=1027&k=jO2u9Fm1" target="_blank" title="加入qq群"><Icon icon="noto-v1:penguin" /> QQ群③:708613202。</a>
       <br><br>
+      
       <span class="span-0">
         <Icon icon="mdi:lightbulb-help" /> p-web 网络搜索，例如：p-web-流浪地球2。
       </span>
