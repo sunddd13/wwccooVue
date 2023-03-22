@@ -497,7 +497,7 @@ sendDisbled.value = false;
 const copyRobotData = (index:number) => {
  // console.log(index)
    var robotData = chatContent.state[index].roboTaskData.data
-   var input = document.createElement('input');
+  /*    var input = document.createElement('input');
    document.body.appendChild(input);
    input.setAttribute('value', robotData);
    input.select();
@@ -506,8 +506,16 @@ const copyRobotData = (index:number) => {
    }else{
     showToast('复制失败');
    }
-   document.body.removeChild(input);
+   document.body.removeChild(input); */
+   navigator.clipboard.writeText(robotData as string)
+   .then(()=>{
+    showToast('复制成功');
+   })
+   .catch(()=>{
+    showToast('复制失败');
+   })
 
+   /* 感谢 诗鸷Temsys的提交 */
 }
 const fanyiRobotData = (index:number) => {
   if(chatContent.state[index].roboTaskData.fanyi==true)
