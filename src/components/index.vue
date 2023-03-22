@@ -507,13 +507,17 @@ const copyRobotData = (index:number) => {
     showToast('复制失败');
    }
    document.body.removeChild(input); */
+
+
+
    navigator.clipboard.writeText(robotData as string)
-   .then(()=>{
-    showToast('复制成功');
-   })
-   .catch(()=>{
-    showToast('复制失败');
-   })
+    .then(() => {
+      showToast('复制成功');
+    })
+    .catch(() => {
+      showToast('复制失败');
+    });
+
 
    /* 感谢 诗鸷Temsys的提交 */
 }
