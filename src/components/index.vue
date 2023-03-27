@@ -29,12 +29,12 @@
     <br><br>
     <li class="btn btn-light btn-sm"   onclick="window.open('https://afdian.net/a/wwccoo', '_blank')" >#前往爱发电支持作者</li>
     <br><br>
-    <li class="btn btn-light btn-sm"   onclick="window.open('https://docs.qq.com/doc/DYURFQUlZY1dIc3Bm', '_blank')" >说明与介绍</li>
+    <li class="btn btn-light btn-sm"   onclick="window.open('https://docs.qq.com/doc/DYUx1c2V0YkJLSHly', '_blank')" >说明与介绍</li>
 
     <template v-if="userData.userToken == ''" >
     <br><br>
      <a style="font-size: 15px;">
-    您暂未登录，未登录用户每天限定问答次数且不会关联对话上下文和保留聊天记录。<br> 点击左侧小图标即可进入个人中心。
+    您暂未登录，未登录用户<a style='color:#FF4040'>每天限定问答次数且不会关联对话上下文和保留聊天记录。</a><br> 点击左侧小图标即可进入个人中心。
     </a>
    </template><template v-else>
     <!-- <Icon icon="mingcute:vip-1-fill" />
@@ -55,9 +55,10 @@
   <div class="conversation-list-right">   
     <div class="ctext-wrap">
     <div class="ctext-wrap-content">
-      <MdEditor  class="mychatMd" preview-only
-         v-model="item.sendChatData"
-      ></MdEditor>              
+       <MdEditor  class="mychatMd" preview-only
+       v-model="item.sendChatData"
+      ></MdEditor>           
+
     </div>
   </div>
   </div>
@@ -107,22 +108,63 @@
 <!-- 输入框 -->
 
 <template v-if=" openUserChatMod.state.open_chatId_conversation_id=='' ">
-<div class="chat-1" :style="{'height': inputHeight+9+'px'}">
+
+
+  
+<div class="chat-1" :style="{'height': formWorkData == ''?  inputHeight + 9 + 'px' : formWorkHeight  + 'px'}">
+
+<template v-if="formWorkData == ''">
+  
 <textarea    
+class="textarea-msg"
 type="text"     
 :style="{'height': inputHeight+'px'}"
 maxlength="10000" 
 placeholder="ctrl+enter快捷发送。"
 v-model="inputMessage"
 @keydown.ctrl.enter="sendMessage"
-></textarea> 
+></textarea>   
+
+</template><template v-else>
+
+
+
+
+<div style="width:100% ; max-height: 100%;  overflow: auto;">
+  
+<!-- 语法模板提示信息 -->
+  <div style="margin-bottom: 7px; margin-top: 7px;  margin-left: 15px;" >   {{ formWorkDataTips }}  </div>
+<!-- 语法模板渲染 -->
+  <div v-for="(item, index) in formWorkList" :key="index" style="margin-bottom: 5px;  margin-left: 15px;"> 
+    <div>
+      <a style="vertical-align: 5px; ">{{ item.text }}:</a>
+      <textarea :id="'textarea-' + index" v-model="item.data"  style="height: 23px; margin-left: 10px; border: none; border-bottom: 1px solid #8D8D8D; background-color: #ffffff00; resize: none;"></textarea>
+    </div>
+
+  </div>
+
+   
+</div>
+
+<!-- 清除语法模板 -->
+<button class="button-1"  @click="formWorkCloseClick"> 
+    <Icon icon="fluent:chat-arrow-back-20-regular"   :color="theme.state.data?'#36404a':''" /> 
+</button> 
+
+</template>
+
+<!-- 语法模板 -->
+<button class="button-1"  @click="formWorkClick"> 
+    <Icon icon="ph:puzzle-piece"   :color="theme.state.data?'#36404a':''" /> 
+</button> 
+<!-- 切换主题 -->
 <button class="button-1" @click="themeClick"> 
   <template v-if="theme.state.data">
     <Icon icon="ph:moon"   :color="theme.state.data?'#36404a':''" />   </template><template v-else>
    <Icon icon="ph:sun-bold"   :color="theme.state.data?'#36404a':''" />
     </template>
-  </button> 
-
+</button> 
+<!-- 发送 -->
 <button class="button-1"  @click="sendMessage"   :disabled="sendDisbled">
 <template v-if=sendDisbled>
  <Icon icon="quill:send-later"  :color="theme.state.data?'#36404a':''"  />
@@ -132,6 +174,8 @@ v-model="inputMessage"
 </button>
 
 </div>
+
+
 </template><template v-else>
   <div class="chat-2">
   <button class="btn btn-primary btn-block left"   @click="openChatDataId"   :disabled="openChatDataButtonCode"  >拉取本次会话</button>
@@ -145,17 +189,116 @@ v-model="inputMessage"
   </div>
 
 
-
-  
   <li class="circle-button" :class="{'expanded': isExpanded}"  @click="toggleExpand">
     <Icon icon="ic:round-data-saver-off" />
   </li> 
-
-
-    
+ 
   <li class="circle-button-down"    @click="scrollDown">
     <Icon icon="material-symbols:swipe-down" />
   </li> 
+
+
+
+  <!-- 语法模板页面 -->
+<!-- <van-overlay :show="formWorkHtml" @click="formWorkHtml = false" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+ -->
+ 
+ <div v-show="formWorkHtml" @click="formWorkHtml = false" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;  position: fixed;top: 0; left: 0;right: 0;bottom: 0;background-color: rgba(0,0,0,.7);"> 
+ 
+  <div style="overflow: auto; width: 85%; height: 70%; background-color: var(--formWorkHtml-background-color); display: flex; flex-direction: column; align-items: center;" @click.stop>
+ <h2 style="margin-bottom: 7px; margin-top: 30px;">语法模板</h2>
+     
+ <van-search
+  :clearable="false"
+  v-model="formWorkSearchData"
+  show-action
+  placeholder="请输入搜索关键词"
+>
+  <template #action>
+    <div @click="formWorkSearchClick">搜索</div>
+  </template>
+</van-search> 
+ 
+<van-pagination
+  v-model="formWorkSearchPageNow"
+  :page-count=formWorkSearchPage
+  :show-page-size="3"
+  force-ellipses
+  @change="formWorkSearchPageClick"
+/>
+
+<van-space wrap :size="25" style="margin-top: 15px; margin-left: 30px; margin-right: 5px;">
+
+<van-cell  v-for="item in formWorkHtmlData"  :key="item.id"  :clickable="true"   :border="false" 
+  :label="'简介:'+item.tipsText" 
+  style="min-height: 130px; width: 260px; box-shadow: 0px 0px 1px 1px #979798;"
+  @click="formWorkOpen(item)"  >
+
+    <!-- 使用 title 插槽来自定义标题 -->
+  <template #title>
+    <span class="custom-title">{{item.templateName}}</span>
+    <van-tag type="primary">{{item.userName}}</van-tag>
+  </template>
+  
+</van-cell>  
+
+</van-space>
+
+
+  </div> 
+
+
+</div>
+
+
+<!-- 语法模板提交页面 -->
+
+<!-- <van-overlay :show="formWorkSendHtml.state.data" @click="formWorkSendHtml.state.data = false" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
+ -->  
+ <div v-show="formWorkSendHtml.state.data" @click="formWorkSendHtml.state.data = false" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;  position: fixed;top: 0;left: 0;right: 0;bottom: 0; background-color: rgba(0,0,0,.7);"> 
+ <div style="overflow: auto; width: 85%; height: 70%; background-color: var(--formWorkHtml-background-color); display: flex; flex-direction: column; align-items: center;" @click.stop>
+      <h2 style="margin-bottom: 25px; margin-top: 30px;">提交语法模板</h2>
+
+      <van-form label-align="top" >
+      
+      <van-field
+       v-model="formWorkHtmlSendData.templateName"
+       rows="1"
+       autosize
+       label="模板名称"
+       type="textarea"
+       placeholder="请输入模板名称"
+       :rules="[{ required: true, message: '请输入模板名称' }]"
+      />
+      <van-field
+      v-model="formWorkHtmlSendData.tipsText"
+       rows="2"
+       autosize
+       label="模板提示信息"
+       type="textarea"
+       placeholder="请输入模板提示信息,将会作为该模板的简介"
+       :rules="[{ required: true, message: '模板提示信息' }]"
+      />
+      <van-field
+      v-model="formWorkHtmlSendData.templateText"
+       rows="3"
+       autosize
+       label="模板发送消息"
+       type="textarea"
+       placeholder="模板发送消息，比如: 你好，我叫{名称}。"
+       :rules="[{ required: true, message: '模板发送消息' }]"
+      />
+
+
+     </van-form>
+          
+     <button class="btn btn-primary btn-block" :disabled="openformWorkHtmlSendButtonCode" style="margin-top: 25px;  width: 150px;" @click="formWorkHtmlSendClick()" >
+        提交
+      </button>       
+      
+    </div>
+  </div> 
+
 
 
  </template>
@@ -175,16 +318,177 @@ import MdEditor from "md-editor-v3";
 import 'md-editor-v3/lib/style.css';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
-import { openUserChatMod,robotaskReturn,roboTaskDataReturn,chatContent,theme } from "./store";
+
+import { openUserChatMod,robotaskReturn,roboTaskDataReturn,chatContent,theme ,formWorkSendHtml} from "./store";
 
 
 
 MdEditor.config({
+  markedRenderer(renderer) {
+    renderer.link = (href:string, title:string, text:string) => {
+      return `<a href="${href}" title="${title}" target="_blank">${text}</a>`;
+    };
+
+    return renderer;
+  },
   editorExtensions: {
     katex: {
       instance: katex
+    }}
+    
+})
+
+
+/* 语法模板功能 */
+const formWorkHeight = ref(0)
+const formWorkDataTips = ref('')
+const formWorkData = ref(``)
+const formWorkList =  ref<{ id: number; text: string; data:string }[]>([]);
+const formWorkHtml = ref(false)
+const formWorkHtmlData =  ref<{ id: number; userName: string; templateText:string,tipsText:string,templateName:string,time:number }[]>([]);
+/* 搜索 */
+const formWorkSearchData = ref('')
+const formWorkSearchPageNow = ref(1)//当前页
+const formWorkSearchPage = ref(1)//总页数 
+
+
+const formWorkSearchClick = () => {
+ 
+  formWorkSearchPageNow.value=1
+  formWorkSearchPage.value=1
+
+  postData("formworkSearch",{
+  search:{ 
+    data: formWorkSearchData.value,
+    page:formWorkSearchPageNow.value
+  }
+  }).then( (res: any) => {
+
+    formWorkHtmlData.value = []
+    formWorkHtmlData.value =   res.search.data.map((item:any,index:number) => ({
+        id: index + 1,
+        userName:item.userName,
+        templateText:chatFormat(item.templateText),
+        tipsText:chatFormat(item.tipsText),
+        templateName:chatFormat(item.templateName),
+        time:item.time,
+    }));
+    formWorkSearchPage.value =  res.search.page
+  
+
+
+  }).catch((err: any) => {
+      console.log(err)
+  })
+
+}
+formWorkSearchClick()
+
+const formWorkSearchPageClick = () => {
+
+  postData("formworkSearch",{
+  search:{ 
+    data: formWorkSearchData.value,
+    page:formWorkSearchPageNow.value
+  }
+  }).then( (res: any) => {
+    formWorkHtmlData.value = []
+    formWorkHtmlData.value =   res.search.data.map((item:any,index:number) => ({
+        id: index + 1,
+        userName:item.userName,
+        templateText:chatFormat(item.templateText),
+        tipsText:chatFormat(item.tipsText),
+        templateName:chatFormat(item.templateName),
+        time:item.time,
+    }));
+  }).catch((err: any) => {
+      console.log(err)
+  })
+
+}
+
+const formWorkText=()=>{
+  //var regex = /{([^}]+)}/g;
+  var regex =  /[{}](.*?)[{}]/g;
+  var data = formWorkData.value
+  var matches = data.match(regex) || [];
+  
+  formWorkHeight.value =  (matches?.length??0) * 36 + 50
+  if( formWorkHeight.value > 200){
+    formWorkHeight.value = 200
+  } 
+
+  formWorkList.value = []
+   formWorkList.value = matches.map((match, index) => ({
+        id: index + 1,
+        text: match,
+        data:''
+    })) ;
+ 
+  if(  formWorkList.value.length == 0)
+  {
+    formWorkDataTips.value+='(此模板无需参数设置)'
+  }
+
+}
+const formWorkOpen=(data:any)=>{
+  
+
+   formWorkDataTips.value= `${data.templateName}(${data.userName}) ${data.tipsText}`
+   formWorkData.value=data.templateText
+
+   formWorkText() 
+ 
+
+   formWorkHtml.value = false 
+}
+
+const formWorkReplacedData=()=>{
+  var replacedData = formWorkList.value.reduce((acc, curr) => {
+    return acc.replace(`${curr.text}`, curr.data)
+  }, formWorkData.value)
+  return replacedData
+}
+
+const formWorkClick=()=>{
+  formWorkHtml.value = !formWorkHtml.value
+}
+const formWorkCloseClick=()=>{
+  formWorkData.value=''
+}
+
+
+/* 语法模板提交功能 */
+const formWorkHtmlSendData =  ref({ tipsText:'', templateName:'', templateText:'',});
+const openformWorkHtmlSendButtonCode = ref(false)
+const formWorkHtmlSendClick = ()=>{
+  openformWorkHtmlSendButtonCode.value=true
+
+  postData("addFormwork",{
+  user:{  
+    token: getCookie('userToken') 
+  },
+  model:{ 
+    tipsText: formWorkHtmlSendData.value.tipsText,
+    templateName:formWorkHtmlSendData.value.templateName,
+    templateText:formWorkHtmlSendData.value.templateText
+  }
+  }).then( (res: any) => {
+    if(res.data.code===0){
+      formWorkHtmlSendData.value.tipsText=''
+      formWorkHtmlSendData.value.templateName=''
+      formWorkHtmlSendData.value.templateText=''
     }
-}})
+
+   showDialog({message:res.data.msg})
+   openformWorkHtmlSendButtonCode.value=false
+    
+  }).catch((err: any) => {
+      console.log(err)
+      showDialog({message:'网络异常。'})
+      openformWorkHtmlSendButtonCode.value=false
+  }) 
+}
 
 
 
@@ -319,12 +623,29 @@ watch(inputMessage,
     }else{
       inputHeight.value = 7 * 19
     }
+
   }
 
 )
 /* 输入框事件 */
 const sendDisbled = ref(false); 
 const sendMessage = async () => {
+  if(formWorkData.value != ''){
+    sendDisbled.value = true;
+    chatContent.state.push({
+    sendChatData: "",
+    roboTaskData: {
+      data:"",
+      data_fanyi:"",
+      fanyi:false
+    },});
+    let msg = formWorkReplacedData()
+    formWorkData.value = ''
+    await chatSendToSer(msg);
+    return
+  }
+
+
   if (inputMessage.value === "" ||   sendDisbled.value == true) {
     return;
   }
@@ -574,13 +895,12 @@ const fanyiRobotData = (index:number) => {
         color: #ff4d4f !important;
       }
 }
-.mychatMd {
-  
+.mychatMd  {
   font-size: 12px;
   display: flex;
   background-color: transparent;
   border-radius: 2px;
-  color: #d1d5db !important;
+  color: var( --md-text-color)  !important;
   :deep(.md-editor-content .md-editor-preview ) {
     color: var( --md-text-color)  !important ;
   }
@@ -751,7 +1071,7 @@ justify-content: space-between;
 
 
 }
-.chat-1 textarea {
+.chat-1 .textarea-msg {
 resize: none; 
 width: 100%;
 

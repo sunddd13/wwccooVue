@@ -74,3 +74,12 @@ export const theme = createStore({
 
 
 
+
+
+export const formWorkSendHtml = createStore({
+  state(){
+    return {
+      data:false
+    }
+}
+})

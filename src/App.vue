@@ -43,6 +43,8 @@ import { theme } from "./components/store";
   --container-menu-color:#262E35;
   --chat-list-li-a-color:#abb4d2;
   --chat-list-li-a-background-color:#36404a;
+  --formWorkHtml-background-color:#1C1C1E;
+
 
 }
 
@@ -66,7 +68,7 @@ import { theme } from "./components/store";
   --container-menu-color:#f7f7f7;
   --chat-list-li-a-color:#717172;
   --chat-list-li-a-background-color:#d6d6d6;
-
+  --formWorkHtml-background-color:#ffffff;
 }
 
 

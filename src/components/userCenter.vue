@@ -69,29 +69,29 @@
       </div>
     </template><template v-else>
       <h3 style="padding: 30px 0px 0px 0px;"> 个人中心 </h3>
-      <div class="container p-lg-4" >
 
-       <div style="padding-bottom: 30px">
+      <div style="padding-bottom: 35px">
+         <button class="btn btn-primary btn-block"  style="margin-top: 10px;  width: 65%; margin: auto;" @click="formWorkSendHtmlClick()" > <Icon icon="material-symbols:text-snippet-outline" /> 分享语法模板</button>       
+      </div>
+
+      <div class="container" >
+
+       <div style="padding-bottom: 20px">
         Vip到期时间：{{  userData.viptime < dayjs().unix() ? "已过期" :   dayjs(userData.viptime*1000).format('YYYY-MM-DD HH:mm:ss') }}
         ,剩余提问次数：{{userData.vipconut}}。
-        <br>
-        Tips: 提问次数 = Vip  <br> (Vip仅作演示功能，本站是免费的。)
        </div>
 
-        <h5 style="padding-bottom: 30px"> 
+        <h5 style="padding-bottom: 0px"> 
            <a href="javascript:;"  style="color: #9aa1b9;text-decoration:underline;"  @click="delUserData" >
            <Icon icon="simple-icons:cookiecutter" />  退出登录</a>
         </h5>
 
        
-         <h3 > 聊天记录</h3>
+         <h3 >聊天记录</h3>
          <div style="padding-bottom: 35px">
          <button class="btn btn-primary btn-block"  style="margin-top: 10px; " :disabled="openUserChatButtonCode"  @click="openUserChatList" > <Icon icon="octicon:log-24" /> 获取聊天记录列表</button>       
          </div>
-         
-      
-            
-            <ul class="list-unstyled chat-list"> <!--  style="pointer-events: auto;" >   -->
+         <ul class="list-unstyled chat-list"> <!--  style="pointer-events: auto;" >   -->
                 <template v-for="(item, index) in userChatListReturn" :key="index"   >
                     <li>
                     <a href="javascript:;" @click="openUserChatData(index)">
@@ -109,16 +109,16 @@
                 </template>
 
 
-            </ul>
+         </ul>
        
       
         
       </div>
 
     </template>
-
-  
 </div>
+
+
 
 </template>
 
@@ -130,7 +130,11 @@ import { getData,postData,getUserData } from "@/api/api";
 import {setCookie , getCookie, delCookie } from '@/api/cookie'
 import { showDialog } from "vant";
 import dayjs from 'dayjs';
-import { openUserChatMod,robotaskReturn,roboTaskDataReturn,chatContent, theme } from "./store";
+import { openUserChatMod,robotaskReturn,roboTaskDataReturn,chatContent, theme ,formWorkSendHtml} from "./store";
+
+const formWorkSendHtmlClick = () => {
+    formWorkSendHtml.state.data = true
+}
 
 const userData = getCurrentInstance()?.appContext.config.globalProperties.$getUserData
 const limitWords = (txt:string) =>{
